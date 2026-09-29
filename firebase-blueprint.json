@@ -1,0 +1,30 @@
+{
+  "entities": {
+    "visitorCounter": {
+      "title": "Visitor Counter",
+      "description": "Tracks real-time visitor statistics for the portfolio.",
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "number",
+          "description": "Total visits recorded"
+        },
+        "uniqueCount": {
+          "type": "number",
+          "description": "Estimated unique visitors"
+        },
+        "lastVisitedAt": {
+          "type": "string",
+          "description": "ISO timestamp of the most recent visit"
+        }
+      },
+      "required": ["count"]
+    }
+  },
+  "firestore": {
+    "/stats/{statId}": {
+      "schema": "#/entities/visitorCounter",
+      "description": "Public visitor analytics document collection"
+    }
+  }
+}

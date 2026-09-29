@@ -1,0 +1,35 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global Safety Net: default-deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isValidId(id) {
+      return id is string && id.size() <= 64 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isValidVisitorCounter(data) {
+      return data.keys().hasAll(['count']) &&
+             data.keys().hasOnly(['count', 'uniqueCount', 'lastVisitedAt']) &&
+             data.count is number &&
+             data.count >= 0 &&
+             (!('uniqueCount' in data) || (data.uniqueCount is number && data.uniqueCount >= 0)) &&
+             (!('lastVisitedAt' in data) || (data.lastVisitedAt is string && data.lastVisitedAt.size() <= 64));
+    }
+
+    // Visitor counter stats collection
+    match /stats/{statId} {
+      allow get: if isValidId(statId);
+      allow list: if false;
+      allow create: if isValidId(statId) && isValidVisitorCounter(request.resource.data);
+      allow update: if isValidId(statId) &&
+                       isValidVisitorCounter(request.resource.data) &&
+                       request.resource.data.diff(resource.data).affectedKeys().hasOnly(['count', 'uniqueCount', 'lastVisitedAt']);
+      allow delete: if false;
+    }
+  }
+}
