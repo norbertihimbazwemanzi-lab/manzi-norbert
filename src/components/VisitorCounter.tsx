@@ -77,14 +77,22 @@ export const VisitorCounter: React.FC<{ variant?: 'badge' | 'card' | 'inline' }>
       try {
         const snap = await getDoc(statsDocRef);
         const now = new Date().toISOString();
+        const dateKey = now.split('T')[0];
 
         if (snap.exists()) {
+          const currentDaily = snap.data().dailyHistory || {};
+          const updatedDaily = {
+            ...currentDaily,
+            [dateKey]: (currentDaily[dateKey] || 0) + 1
+          };
+
           await setDoc(
             statsDocRef,
             {
               count: increment(1),
               uniqueCount: isUnique ? increment(1) : (snap.data().uniqueCount || 1),
-              lastVisitedAt: now
+              lastVisitedAt: now,
+              dailyHistory: updatedDaily
             },
             { merge: true }
           );
@@ -92,7 +100,10 @@ export const VisitorCounter: React.FC<{ variant?: 'badge' | 'card' | 'inline' }>
           await setDoc(statsDocRef, {
             count: 1,
             uniqueCount: 1,
-            lastVisitedAt: now
+            lastVisitedAt: now,
+            dailyHistory: {
+              [dateKey]: 1
+            }
           });
         }
       } catch (err) {

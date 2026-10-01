@@ -3,6 +3,7 @@ import { ArrowUp, Github, Linkedin, Facebook, Instagram, Mail, Heart } from 'luc
 import { PROFILE } from '../data/portfolioData';
 import { BrandLogo } from './BrandLogo';
 import { VisitorCounter } from './VisitorCounter';
+import { TrafficAnalytics } from './TrafficAnalytics';
 
 export const Footer: React.FC = () => {
   const [showScrollTop, setShowScrollTop] = useState(false);
@@ -141,6 +142,11 @@ export const Footer: React.FC = () => {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Real-time Traffic Analytics Section */}
+        <div className="py-10 border-b border-slate-900">
+          <TrafficAnalytics />
         </div>
 
         {/* Bottom Bar */}

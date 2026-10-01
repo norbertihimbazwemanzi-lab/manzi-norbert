@@ -16,6 +16,10 @@
         "lastVisitedAt": {
           "type": "string",
           "description": "ISO timestamp of the most recent visit"
+        },
+        "dailyHistory": {
+          "type": "object",
+          "description": "Map of ISO date strings to daily visit numbers"
         }
       },
       "required": ["count"]
